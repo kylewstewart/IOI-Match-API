@@ -1,0 +1,2 @@
+class IoisController < ApplicationController
+end
