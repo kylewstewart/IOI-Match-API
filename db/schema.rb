@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170624195239) do
+ActiveRecord::Schema.define(version: 20170626232006) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,13 @@ ActiveRecord::Schema.define(version: 20170624195239) do
     t.string "side"
     t.text "ranked_eps", default: [], array: true
     t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "negotiation_principals", force: :cascade do |t|
+    t.integer "negotiation_id"
+    t.integer "principal_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
