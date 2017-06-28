@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20170626232006) do
   create_table "negotiation_principals", force: :cascade do |t|
     t.integer "negotiation_id"
     t.integer "principal_id"
+    t.integer "satisfaction"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

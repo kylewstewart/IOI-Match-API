@@ -3,6 +3,7 @@ class CreateNegotiationPrincipals < ActiveRecord::Migration[5.1]
     create_table :negotiation_principals do |t|
       t.integer :negotiation_id
       t.integer :principal_id
+      t.integer :satisfaction
 
       t.timestamps
     end
