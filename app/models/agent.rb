@@ -1,8 +1,8 @@
 class Agent < ApplicationRecord
   has_secure_password
 
-  has_many :sponserships
-  has_many :principals, through: :sponserships
+  has_many :sponsorships
+  has_many :principals, through: :sponsorships
   has_many :negotiations
 
   def password=(password)

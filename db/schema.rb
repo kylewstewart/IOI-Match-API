@@ -24,9 +24,9 @@ ActiveRecord::Schema.define(version: 20170626232006) do
 
   create_table "iois", force: :cascade do |t|
     t.integer "principal_id"
-    t.string "stock"
+    t.integer "stock_id"
     t.string "side"
-    t.text "ranked_eps", default: [], array: true
+    t.text "ranked_principal_ids", default: [], array: true
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
