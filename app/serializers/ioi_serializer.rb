@@ -1,5 +1,5 @@
 class IoiSerializer < ActiveModel::Serializer
-  attributes :id, :side, :stock, :time, :ranked_principals, :active
+  attributes :id, :side, :stock, :time, :ranked_agents, :active
 
   def stock
     {id: object.stock_id, name: Stock.find(object.stock_id).name}
@@ -9,8 +9,8 @@ class IoiSerializer < ActiveModel::Serializer
     DateTime.parse(object.updated_at.to_s).strftime('%H:%M:%S')
   end
 
-  def ranked_principals
-    object.ranked_principal_ids.map{|id| Principal.find(id)}.map{|principal| {id: principal.id, name: principal.name}}
+  def ranked_agents
+    object.ranked_agent_ids.map{|id| Agent.find(id)}.map{|agent| {id: agent.id, name: agent.name}}
   end
 
   def active

@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     namespace :v1 do
 
       resources :principals, only: [:create, :update] do
+        resources :sponsors, only: [:index]
         get '/sponsorships' => 'sponsorships#principals_index'
         get '/negotations' => 'negotations#principals_index'
         get '/negotations/:id' => 'negotations#principals_show'

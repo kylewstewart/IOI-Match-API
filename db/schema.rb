@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 20170626232006) do
     t.integer "principal_id"
     t.integer "stock_id"
     t.string "side"
-    t.text "ranked_principal_ids", default: [], array: true
+    t.text "ranked_agent_ids", default: [], array: true
     t.boolean "active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -55,7 +55,7 @@ ActiveRecord::Schema.define(version: 20170626232006) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "sponserships", force: :cascade do |t|
+  create_table "sponsorships", force: :cascade do |t|
     t.integer "principal_id"
     t.integer "agent_id"
     t.datetime "created_at", null: false

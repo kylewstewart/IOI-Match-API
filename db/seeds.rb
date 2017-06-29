@@ -22,7 +22,7 @@ stocks ||= Stock.all
 principals.each do |principal|
   random_agents = agents.shuffle
   for i in 0..4
-    Sponsership.create(principal_id: principal.id, agent_id: random_agents[i].id)
+    Sponsorship.create(principal_id: principal.id, agent_id: random_agents[i].id)
   end
 end
 
@@ -30,7 +30,7 @@ principals.each do |principal|
   stocks.each do |stock|
     side = ["Buy", "Sell"].shuffle[0]
     Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
-      ranked_principal_ids: agents.shuffle.map{|agent| agent.id}, side: side, active: true)
+      ranked_agent_ids: agents.shuffle.map{|agent| agent.id}, side: side, active: true)
   end
 end
 

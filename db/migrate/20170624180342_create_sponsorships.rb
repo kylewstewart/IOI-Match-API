@@ -1,6 +1,6 @@
-class CreateSponserships < ActiveRecord::Migration[5.1]
+class CreateSponsorships < ActiveRecord::Migration[5.1]
   def change
-    create_table :sponserships do |t|
+    create_table :sponsorships do |t|
       t.integer :principal_id
       t.integer :agent_id
 
