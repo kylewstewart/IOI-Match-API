@@ -9,11 +9,10 @@
   "Thornburg Management", "Artisan Partners", "BNP Paribas Asset Management", "Wells Capital Management", "Driehaus Capital Management",
   "AllianceBernstein"].each{|name| Principal.create(name: name, password: "password")}
 
-["Merrill Lynch", "Barclays Capital", "Citi", "Credit Suisse", "Deutsche Bank", "Goldman Sachs", "J.P. Morgan", "Morgan Stanley",
-  "UBS"].each{|name| Agent.create(name: name, password: "password")}
+["BAML", "BarCap", "Citi", "CS", "DB", "GS", "JPM", "MS","UBS"].each{|name| Agent.create(name: name, password: "password")}
 
 ["MMM", "AXP", "AAPL", "BA", "CAT", "CVX", "CSCO", "KO", "DD", "XOM", "GE", "GS", "HD", "IBM", "INTC", "JNJ", "JPM", "MCD",
-  "MRK", "MSFT", "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS"].each{|name| Stock.create(name: name)}
+  "MRK", "MSFT", "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS"].each{|exch_code| Stock.create(exch_code: exch_code)}
 
 principals ||= Principal.all
 agents ||= Agent.all

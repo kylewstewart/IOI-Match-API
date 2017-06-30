@@ -20,6 +20,8 @@ Rails.application.routes.draw do
         get '/negotations' => 'negotations#agents_index'
       end
 
+      resources :stocks, only: [:index]
+
     end
   end
 

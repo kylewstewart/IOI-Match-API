@@ -2,7 +2,7 @@ class IoiSerializer < ActiveModel::Serializer
   attributes :id, :side, :stock, :time, :ranked_agents, :active
 
   def stock
-    {id: object.stock_id, name: Stock.find(object.stock_id).name}
+    {id: object.stock_id, name: Stock.find(object.stock_id).exch_code}
   end
 
   def time
