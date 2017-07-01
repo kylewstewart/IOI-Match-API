@@ -29,7 +29,7 @@ principals.each do |principal|
   stocks.each do |stock|
     side = ["Buy", "Sell"].shuffle[0]
     Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
-      ranked_agent_ids: agents.shuffle.map{|agent| agent.id}, side: side, active: true)
+      ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
   end
 end
 
