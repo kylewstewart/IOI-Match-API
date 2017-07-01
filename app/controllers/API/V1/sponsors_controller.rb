@@ -4,13 +4,13 @@ class Api::V1::SponsorsController < ApplicationController
     principal = Principal.find(params['principal_id'])
     sponsors = principal.sponsorships.map{|s|Agent.find(s.agent_id)}
     data = sponsors.map do |sponsor|
-      { principal_id: sponsor.id,
+      { agent_id: sponsor.id, 
         name: sponsor.name,
         pct_traded: agent_pct_traded(sponsor.id),
         satisfaction: satisfaction(sponsor.id)
       }
     end
-    render json: data 
+    render json: data
   end
 
   def agent_pct_traded(id)

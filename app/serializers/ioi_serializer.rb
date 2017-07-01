@@ -1,8 +1,8 @@
 class IoiSerializer < ActiveModel::Serializer
-  attributes :id, :side, :stock, :time, :ranked_agents, :active
+  attributes :id, :side, :stock, :ranked_agents
 
   def stock
-    {id: object.stock_id, name: Stock.find(object.stock_id).exch_code}
+    Stock.find(object.stock_id).exch_code
   end
 
   def time
@@ -10,7 +10,7 @@ class IoiSerializer < ActiveModel::Serializer
   end
 
   def ranked_agents
-    object.ranked_agent_ids.map{|id| Agent.find(id)}.map{|agent| {id: agent.id, name: agent.name}}
+    object.ranked_agent_ids.map{|id| Agent.find(id)}.map{|agent| agent.name}
   end
 
   def active
