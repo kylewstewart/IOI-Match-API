@@ -4,6 +4,7 @@ class CreateNegotiations < ActiveRecord::Migration[5.1]
       t.integer :agent_id
       t.boolean :active
       t.boolean :traded
+      t.integer :stock_id
 
       t.timestamps
     end
