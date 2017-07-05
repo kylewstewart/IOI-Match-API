@@ -19,6 +19,8 @@ class Api::V1::SponsorsController < ApplicationController
       return nil
     else
       pct_traded = agent.negotiations.where(traded: true, active: false).count / agent.negotiations.where(active: false).count.to_f
+
+      binding.pry
       return '%.2f' % (pct_traded * 100) + "%"
     end
   end
