@@ -14,8 +14,8 @@ class Api::V1::IoisController < ApplicationController
     principal_id = params['principal_id']
     ioi = Ioi.create(principal_id: principal_id, ranked_agent_ids: ranked_agent_ids,
         stock_id: stock_id, side: params['IOI']['side'], active: true)
+    Negotiation.match
     render json: ioi
-    Negotiation.match?
   end
 
   def update
@@ -25,8 +25,8 @@ class Api::V1::IoisController < ApplicationController
     stock_id = Stock.find_by(exch_code: params['IOI']['stock']).id
     side = params['IOI']['side']
     ioi.update(ranked_agent_ids: ranked_agent_ids, stock_id: stock_id, side: side)
+    Negotiation.match
     render json: ioi
-    Negotiation.match?
   end
 
   def destroy

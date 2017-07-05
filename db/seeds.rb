@@ -1,6 +1,6 @@
 
-["Vangaurd Group", "Aberdeen Asset Management", "Templeton Investment", "JP Morgan Asset Management", "Fidelity International"].each{|name| Principal.create(name: name, password: "password")}
-  # "Capital Global", "Matthews International Capital Management", "BlackRock Investment Management", "Oppenheimer Funds",
+["Vangaurd Group", "Aberdeen Asset Management", "Templeton Investment", "JP Morgan Asset Management", "Fidelity International",
+  "Capital Global", "Matthews International Capital Management", "BlackRock Investment Management", "Oppenheimer Funds"].each{|name| Principal.create(name: name, password: "password")}
   # "Schroders Investment Management", "T. Rowe Price & Associates", "Lazard Asset Management", "Fidelity Management & Research",
   # "First State Investments", "Grantham, Mayo, Van Otterloo & Co.", "TIAA-CREF Investment Management", "Pictet Asset Management",
   # "Allianz Global Investors", "Principal Global Investors", "MFS Investment Management", "Morgan Stanley Investment Management",
@@ -27,25 +27,40 @@ principals.each do |principal|
   end
 end
 
-# principals.each do |principal|
-#   stocks.each do |stock|
-#     # side = ["Buy", "Sell"].shuffle[0]
-#     # Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
-#     #   ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
-#   end
-# end
+principals.each do |principal|
+  stocks.each do |stock|
+    side = ["Buy", "Sell"].shuffle[0]
+    Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
+      ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
+  end
+end
 
-principal = Principal.find(1)
-Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',
-ranked_agent_ids: [3,4,5], active: true)
+# principal = Principal.find(1)
+# Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',
+# ranked_agent_ids: [1,2,3], active: true)
+#
+# principal = Principal.find(2)
+# Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',
+# ranked_agent_ids: [1,2,3], active: true)
+#
+# principal = Principal.find(3)
+# Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',
+# ranked_agent_ids: [2,3,1], active: true)
+#
+# principal = Principal.find(4)
+# Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Sell',
+# ranked_agent_ids: [2,3,1], active: true)
+#
+# principal = Principal.find(5)
+# Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Sell',
+# ranked_agent_ids: [3,2,1], active: true)
+#
+# principal = Principal.find(6)
+# Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Sell',
+# ranked_agent_ids: [3,2,1], active: true)
 
-principal = Principal.find(2)
-Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Sell',
-ranked_agent_ids: [1,2,3], active: true)
+Negotiation.match
 
-principal = Principal.find(3)
-Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Sell',
-ranked_agent_ids: [5], active: true)
 
 # Negotiation.create(agent_id: 1, active: false, traded: true)
 # NegotiationPrincipal.create(negotiation_id: 1, principal_id: 1, satisfaction: 4)
