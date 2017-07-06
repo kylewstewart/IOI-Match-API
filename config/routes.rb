@@ -13,12 +13,12 @@ Rails.application.routes.draw do
         # resources :negotations, only: [:show]
       end
 
-      # resources :agents, only: [:index] do
+      resources :agents, only: [:index] do
       #   resources :satisfaction, only: [:index]
       #   get '/pct_traded' => 'pct_traded#agents_index'
       #   get '/sponsorships' => 'sponsorships#agents_index'
       #   get '/negotations' => 'negotations#agents_index'
-      # end
+      end
 
       resources :stocks, only: [:index]
       resources :iois, only: [:destroy,:update]
