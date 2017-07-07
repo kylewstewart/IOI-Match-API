@@ -17,6 +17,10 @@ Rails.application.routes.draw do
       resources :stocks, only: [:index]
       resources :iois, only: [:destroy,:update]
 
+      resources :negotiations, only: [] do
+        get '/principals' => 'principals#negotiation_principals'
+      end
+
     end
   end
 
