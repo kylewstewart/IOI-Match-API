@@ -15,11 +15,13 @@ Rails.application.routes.draw do
       end
 
       resources :stocks, only: [:index]
-      resources :iois, only: [:destroy,:update]
+      resources :iois, only: [:destroy, :update]
 
       resources :negotiations, only: [] do
-        get '/principals' => 'principals#negotiation_principals'
+        resources :negotiation_principals, only: [:index]
       end
+
+      resources :negotiation_principals, only: [:update]
 
     end
   end
