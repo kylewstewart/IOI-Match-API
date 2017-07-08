@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 20170626232006) do
     t.integer "principal_id"
     t.string "side"
     t.integer "satisfaction"
+    t.boolean "traded"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -7,7 +7,7 @@ class Api::V1::PrincipalsController < ApplicationController
 
   def negotiation_principals
     negotiation = Negotiation.find(params['negotiation_id'])
-    principals = negotiation.negotiation_principals
-    render json: principals
+    negotiation_principals = negotiation.negotiation_principals
+    render json: negotiation_principals
   end
 end
