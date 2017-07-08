@@ -7,8 +7,9 @@ class Api::V1::NegotiationPrincipalsController < ApplicationController
   end
 
   def update
-    binding.pry
-    puts "hello world"
+    negotiation_principal = NegotiationPrincipal.find(params['id'])
+    negotiation_principal.update(params['key'].to_sym => params['value'])
+    render json: negotiation_principal
   end
 
 

@@ -1,4 +1,4 @@
-class Api::V1::NegotationsController < ApplicationController
+class Api::V1::NegotiationsController < ApplicationController
 
   def principals_index
     principal = Principal.find(params['principal_id'])
@@ -6,16 +6,16 @@ class Api::V1::NegotationsController < ApplicationController
     render json: negotiations
   end
 
-  def principals_show
-    principal = Principal.find(params['principal_id'])
-    negotation = principal.negotiations.where(id: params['id']).first
-    render json: negotation
-  end
-
   def agents_index
     agent = Agent.find(params['agent_id'])
     negotations = agent.negotiations
     render json: negotations
+  end
+
+  def update
+    negotiation = Negotiation.find(params['id'])
+    negotiation.update(active: params['active'], traded: params['traded'])
+    render json: negotiation
   end
 
 end

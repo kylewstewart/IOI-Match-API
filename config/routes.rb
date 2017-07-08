@@ -6,18 +6,18 @@ Rails.application.routes.draw do
       resources :principals, only: [:index] do
         resources :sponsors, only: [:index]
         resources :iois, only: [:index, :create]
-        get '/negotations' => 'negotations#principals_index'
+        get '/negotiations' => 'negotiations#principals_index'
       end
 
       resources :agents, only: [:index] do
         resources :sponsorships, only: [:index]
-        get '/negotations' => 'negotations#agents_index'
+        get '/negotiations' => 'negotiations#agents_index'
       end
 
       resources :stocks, only: [:index]
       resources :iois, only: [:destroy, :update]
 
-      resources :negotiations, only: [] do
+      resources :negotiations, only: [:update] do
         resources :negotiation_principals, only: [:index]
       end
 
