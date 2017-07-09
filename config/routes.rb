@@ -19,9 +19,13 @@ Rails.application.routes.draw do
 
       resources :negotiations, only: [:update] do
         resources :negotiation_principals, only: [:index]
+        resources :principals, only: [] do
+          get 'negotiation_principals' => 'negotiation_principals#show'
+          patch 'negotiation_principals' => 'negotiation_principals#update_rating'
+        end
       end
 
-      resources :negotiation_principals, only: [:update]
+      patch '/negotiation_principals/:id' => 'negotiation_principals#update_traded'
 
     end
   end

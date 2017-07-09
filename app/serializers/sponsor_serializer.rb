@@ -1,5 +1,5 @@
 class SponsorSerializer < ActiveModel::Serializer
-  attributes :id, :agent_id, :agent_name, :pct_traded, :satisfaction
+  attributes :id, :agent_id, :agent_name, :pct_traded, :rating
 
   def agent_id
     agent.id
@@ -18,11 +18,11 @@ class SponsorSerializer < ActiveModel::Serializer
     '%.2f' % (pct_traded * 100) + "%"
   end
 
-  def satisfaction
+  def rating
     negotiations = agent.negotiations.map{|n| n.negotiation_principals}.flatten
-    satisfactions = negotiations.map{|np| np.satisfaction}.compact
-    return 'N/A' if satisfactions.length == 0
-    satisfactions.inject{|sum, sat| sum + sat }.to_f / satisfactions.length
+    ratings = negotiations.map{|np| np.rating}.compact
+    return 'N/A' if ratings.length == 0
+    ratings.inject{|sum, sat| sum + sat }.to_f / ratings.length
   end
 
 

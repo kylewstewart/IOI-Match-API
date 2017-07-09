@@ -55,12 +55,3 @@ end
 # ranked_agent_ids: [3,2,1], active: true)
 
 Negotiation.match
-
-
-# Negotiation.create(agent_id: 1, active: false, traded: true)
-# NegotiationPrincipal.create(negotiation_id: 1, principal_id: 1, satisfaction: 4)
-# NegotiationPrincipal.create(negotiation_id: 1, principal_id: 2, satisfaction: 3)
-#
-# Negotiation.create(agent_id: 1, active: false, traded: false)
-# NegotiationPrincipal.create(negotiation_id: 2, principal_id: 1, satisfaction: 4)
-# NegotiationPrincipal.create(negotiation_id: 2, principal_id: 2, satisfaction: 5)

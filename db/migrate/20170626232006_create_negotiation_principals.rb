@@ -4,7 +4,7 @@ class CreateNegotiationPrincipals < ActiveRecord::Migration[5.1]
       t.integer :negotiation_id
       t.integer :principal_id
       t.string :side
-      t.integer :satisfaction
+      t.integer :rating
       t.boolean :traded
 
       t.timestamps
