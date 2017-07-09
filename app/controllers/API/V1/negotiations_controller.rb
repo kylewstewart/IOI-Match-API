@@ -3,7 +3,7 @@ class Api::V1::NegotiationsController < ApplicationController
   def principals_index
     principal = Principal.find(params['principal_id'])
     negotiations = principal.negotiations
-    render json: negotiations
+    render json: negotiations, principal
   end
 
   def agents_index

@@ -3,6 +3,7 @@ class NegotiationSerializer < ActiveModel::Serializer
     :exch_code
 
   def agent_name
+    binding.pry
     agent = Agent.find(object.agent_id)
     agent.name
   end
