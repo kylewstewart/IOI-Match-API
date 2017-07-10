@@ -68,7 +68,7 @@ ActiveRecord::Schema.define(version: 20170626232006) do
   create_table "stocks", force: :cascade do |t|
     t.string "name"
     t.string "exch_code"
-    t.string "county"
+    t.string "country"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

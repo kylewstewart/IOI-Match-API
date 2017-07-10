@@ -10,19 +10,21 @@ class SponsorSerializer < ActiveModel::Serializer
   end
 
   def pct_traded
-    negotiation_count = agent.negotiations.where(active: false).count
-    return 'N/A' if negotiation_count == 0
-    trade_count = agent.negotiations.where(traded: true, active: false).count
-    return "0.00%" if trade_count == 0
-    pct_traded = trade_count / negotiation_count.to_f
-    '%.2f' % (pct_traded * 100) + "%"
+    negotiations = agent.negotiations.where(active: false)
+    neg_prins = negotiations.map{|neg| neg.negotiation_principals}.flatten
+    return 'n/a' if neg_prins.count == 0
+    trade_count = neg_prins.select{|np| !!np.traded}.count
+    return "0%" if trade_count == 0
+    pct_traded = trade_count / neg_prins.count.to_f
+    '%.0f' % (pct_traded * 100) + "%"
   end
 
   def rating
     negotiations = agent.negotiations.map{|n| n.negotiation_principals}.flatten
     ratings = negotiations.map{|np| np.rating}.compact
-    return 'N/A' if ratings.length == 0
-    ratings.inject{|sum, sat| sum + sat }.to_f / ratings.length
+    return 'n/a' if ratings.length == 0
+    rating = ratings.inject{|sum, sat| sum + sat }.to_f / ratings.length
+    '%.2f' % (rating.round(2))
   end
 
 

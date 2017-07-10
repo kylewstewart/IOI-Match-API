@@ -10,12 +10,12 @@ class SponsorshipSerializer < ActiveModel::Serializer
   end
 
   def pct_traded
-    negotiation_count = principal.negotiations.where(active: false).count
-    return 'N/A' if negotiation_count == 0
-    trade_count = principal.negotiations.where(traded: true, active: false).count
-    return "0.00%" if trade_count == 0
-    pct_traded = trade_count / negotiation_count.to_f
-    '%.2f' % (pct_traded * 100) + "%"
+    negotiations = principal.negotiation_principals.select{|np| np.negotiation.active == false}
+    return 'n/a' if negotiations.count == 0
+    trade_count = negotiations.select{|neg| !!neg.traded}.count
+    return "0.0%" if trade_count == 0
+    pct_traded = trade_count / negotiations.count.to_f
+    '%.0f' % (pct_traded * 100) + "%"
   end
 
   def principal

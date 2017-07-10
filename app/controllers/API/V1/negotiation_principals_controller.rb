@@ -13,14 +13,13 @@ class Api::V1::NegotiationPrincipalsController < ApplicationController
       neg_id: negotiation_principal.negotiation_id,
       rating: negotiation_principal.rating
     }
-
-
   end
 
   def update_traded
-    negotiation_principal = NegotiationPrincipal.find(params['id'])
-    negotiation_principal.update(traded: params['traded'])
-    render json: negotiation_principal
+    neg_prin = NegotiationPrincipal.find(params['id'])
+    neg_prin.update(traded: params['traded'])
+    update_ioi(neg_prin)
+    render json: neg_prin
   end
 
   def update_rating
@@ -28,7 +27,13 @@ class Api::V1::NegotiationPrincipalsController < ApplicationController
       principal_id: params['principal_id']).first
     negotiation_principal.update(rating: params['rating'])
     render json: negotiation_principal
+  end
 
+  def update_ioi(neg_prin)
+    prin_id = neg_prin.principal_id
+    stock_id = neg_prin.negotiation.stock_id
+    ioi = Ioi.where(principal_id: prin_id, stock_id: stock_id)[0]
+    ioi.ranked_agent_ids.include?(neg_prin.negotiation.agent_id.to_s) ? ioi.update(active: false) : false
   end
 
 
