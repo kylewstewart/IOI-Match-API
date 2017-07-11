@@ -24,13 +24,13 @@ principals.each do |principal|
   agents.shuffle[0..2].map{|agent| Sponsorship.create(principal_id: principal.id, agent_id: agent.id)}
 end
 
-# principals.each do |principal|
-#   stocks.shuffle[0..2].each do |stock|
-#     side = ["Buy", "Sell"].shuffle[0]
-#     Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
-#       ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
-#   end
-# end
+principals.each do |principal|
+  stocks.shuffle[0..2].each do |stock|
+    side = ["Buy", "Sell"].shuffle[0]
+    Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
+      ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
+  end
+end
 
 # principal = Principal.find(1)
 # Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',

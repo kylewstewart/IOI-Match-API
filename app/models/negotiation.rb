@@ -24,6 +24,7 @@ class Negotiation < ApplicationRecord
   end
 
   ##  GET_NEGOTIATIONS
+  #   Recieves all Matches from #Match
   #   Iterates over array of Matches
   #   Calls #get_pref_broker to find the most common preferred broker for each match. Return false if none exisit.
   #   Creates a new instance of a Negotiation that belongs to the preferred broker.
@@ -43,6 +44,7 @@ class Negotiation < ApplicationRecord
   end
 
   ##  GET_PREF_BROKER
+  #   Recieves all IOIs for a Match from #Get_negotiations
   #   Calls #get_common_brokers to find the most common broker.
   #   Returns false if no common broker exists
   #   Iterates over the the iois in a match and collects an array of broker preferance lists.
@@ -55,6 +57,7 @@ class Negotiation < ApplicationRecord
   end
 
   ##  GET_COMMON_BROKER
+  #   Recieves all IOIs for a Match from #Get_pref_broker
   #   Collects the preferred broker lists (ranked_agent_ids) from each IOI into one array
   #   Creates a hash of key: broker(agent_id) and value: number of occurances.
   #   Interates over the range of the count of all brokers to 2.
@@ -77,19 +80,42 @@ class Negotiation < ApplicationRecord
   end
 
   ##  REMOVE_NO_BUYER_OR_NO_SELLER
-  #   
-
+  #   Receives all common brokers and IOIs for a given match from #Get_common_broker
+  #   Seperates IOI between buys and sells
+  #   Collects ranked broker lists
+  #   Iterates over list of common brokers
+  #     Interates over array of buy ranked borker list and selects those that include common broker
+  #     Interates over array of sell ranked borker list and selects those that include common broker
+  #     return true and the common broker if neither buy or sell lists are empty
   def self.remove_no_buyer_or_no_seller(common, iois)
     return common if common.empty?
+    buys = iois.select{|ioi|ioi.side == "Buy"}
+    sells = iois.select {|ioi|ioi.side == "Sell"}
+    buys_agent_ids = buys.map{|ioi|ioi.ranked_agent_ids}
+    sells_agent_ids = sells.map{|ioi|ioi.ranked_agent_ids}
     common.select do |agent_id, freq|
-      buys = iois.select{|ioi|ioi.side=="Buy"}.map{|ioi|ioi.ranked_agent_ids}.select{|ranked_agent_ids|ranked_agent_ids.include?(agent_id)}
-      sells = iois.select {|ioi|ioi.side == "Sell"}.map{|ioi|ioi.ranked_agent_ids}.select{|ranked_agent_ids|ranked_agent_ids.include?(agent_id)}
-      !buys.empty? && !sells.empty?
+      filtered_buys = buys_agent_ids.select{|ranked_agent_ids|ranked_agent_ids.include?(agent_id)}
+      filtered_sells = sells_agent_ids.select{|ranked_agent_ids|ranked_agent_ids.include?(agent_id)}
+      !filtered_buys.empty? && !filtered_sells.empty?
     end
   end
 
-  def self.ranked_voting(ranked_agents, canidates, round=1)
-    votes = ranked_agents.map{|agents| agents & canidates}.map{|agents| agents[0]}.compact
+  ##  RANKED_VOTING
+  #   Recieves array of ranked_canidates arrays(or brokers), array of canidates and set round to default 1
+  #   Iterates thru ranked canidates array and removes any ranked candiate that is not included in canidates
+  #   Collects most preferred canidate from each filtered_canidate array into one array of votes
+  #   Groups canidates into frequency has with key: canidate and value: # of votes
+  #   Iterates thru freq hash and puts each vote total into an array and sorts
+  #   Checks if max vote count is a majortiy of votes
+  #     if true finds canidate with max votes and returns canidate at the winner
+  #     else:
+  #       Finds the lowest vote count
+  #       Checks for a tie if true calls #tiebreaker
+  #       Canidate with the lowest vote total is removed from Canidates and makes a recursive call to
+  #         #Ranked_voting with new Candidates and increments round by 1
+  def self.ranked_voting(ranked_canidates, canidates, round=1)
+    filtered_canidates = ranked_canidates.map{|agents| agents & canidates}
+    votes = filtered_canidates.map{|agents| agents[0]}.compact
     vote_freq = votes.each_with_object(Hash.new(0)){|key,hash| hash[key] += 1}
     sorted_vote_count = vote_freq.map{|agent_id, count| count}.sort
 
@@ -97,30 +123,45 @@ class Negotiation < ApplicationRecord
       return vote_freq.select{|agent_id, votes| votes == sorted_vote_count[-1]}.map{|agent_id, votes| agent_id}.first
     else
       losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
-      losers = tiebreaker(ranked_agents, losers) if losers.count > 1
+      losers = tiebreaker(ranked_canidates, losers) if losers.count > 1
       remaining_canidaties = canidates.select{|agent_id| agent_id != losers.first}
-      self.ranked_voting(ranked_agents, remaining_canidaties, round + 1)
+      self.ranked_voting(ranked_canidates, remaining_canidaties, round + 1)
     end
   end
 
-  def self.tiebreaker (ranked_agents, losers, index=0)
-    max_index = ranked_agents.max_by(&:length).count
+  ## TIEBREAKER
+  #  Receives ranked_canditate arrays, an array of losers and defaults index to 0
+  #  Follows same steps as #ranked_voting to find a sorted_vote_count
+  #  If lowest vote count is 1, returns lowest vote getting as the loser
+  #  Else, makes a recursive call to #Tiebreaker with all losers with the lowest vote count
+  #   and increments index by 1, so that the next round will count the first and second most preferred canidates
+  #   recursive calls continue until their is a single lowest vote getter or all votes are counted.
+  #   If their is never a single lowest vote getter, loser is chosen at radom.
+  def self.tiebreaker (ranked_canidates, losers, index=0)
+    max_index = ranked_canidates.max_by(&:length).count
     while index < max_index
-      votes = ranked_agents.map{|agents| agents & losers}.map{|agents| agents[0..index]}.compact.flatten
+      filtered_canidates = ranked_canidates.map{|agents| agents & losers}
+      votes = filtered_canidates.map{|agents| agents[0..index]}.compact.flatten
       vote_freq = votes.each_with_object(Hash.new(0)){|key,hash| hash[key] += 1}
       sorted_vote_count = vote_freq.map{|agent_id, count| count}.sort
+
       losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
       return losers.first if losers.count == 1
       index += 1
-      self.tiebreaker(ranked_agents, losers, index)
+      self.tiebreaker(ranked_canidates, losers, index)
     end
     losers.shuffle.first
   end
 
+  ##  MAJORITY
+  #   Called by #ranked_voting to determine the majority of votes
   def self.majority(count)
     count % 2 == 0 ? (count / 2) + 1 : (count /2.0).round
   end
 
+  ## ADD_PARTICIPANTS
+  #  Called by #get_negotiations and revieves all a match IOIs and the newly created Negotiation object
+  #  Iterates thru IOIs and creates a NegotiationPrincipal for all Principal that that are included in the new Negotiation.
   def self.add_particitpants(iois, negotiation)
     iois.each do |ioi|
       if ioi.ranked_agent_ids.include?(negotiation.agent_id.to_s)
