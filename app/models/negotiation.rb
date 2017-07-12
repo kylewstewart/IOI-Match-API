@@ -43,6 +43,19 @@ class Negotiation < ApplicationRecord
     !negotiations.empty? ? negotiations : false
   end
 
+  ## ADD_PARTICIPANTS
+  #  Called by #get_negotiations and revieves all a match IOIs and the newly created Negotiation object
+  #  Iterates thru IOIs and creates a NegotiationPrincipal for all Principal that that are included in the new Negotiation.
+  def self.add_particitpants(iois, negotiation)
+    iois.each do |ioi|
+      if ioi.ranked_agent_ids.include?(negotiation.agent_id.to_s)
+        NegotiationPrincipal.create(negotiation_id: negotiation.id, principal_id: ioi.principal_id, side: ioi.side)
+      else
+        next
+      end
+    end
+  end
+
   ##  GET_PREF_BROKER
   #   Recieves all IOIs for a Match from #Get_negotiations
   #   Calls #get_common_brokers to find the most common broker.
@@ -89,14 +102,15 @@ class Negotiation < ApplicationRecord
   #     return true and the common broker if neither buy or sell lists are empty
   def self.remove_no_buyer_or_no_seller(common, iois)
     return common if common.empty?
-    buys = iois.select{|ioi|ioi.side == "Buy"}
-    sells = iois.select {|ioi|ioi.side == "Sell"}
-    buys_agent_ids = buys.map{|ioi|ioi.ranked_agent_ids}
-    sells_agent_ids = sells.map{|ioi|ioi.ranked_agent_ids}
     common.select do |agent_id, freq|
-      filtered_buys = buys_agent_ids.select{|ranked_agent_ids|ranked_agent_ids.include?(agent_id)}
-      filtered_sells = sells_agent_ids.select{|ranked_agent_ids|ranked_agent_ids.include?(agent_id)}
-      !filtered_buys.empty? && !filtered_sells.empty?
+      buys = []
+      sells = []
+      iois.each do |ioi|
+        if ioi.ranked_agent_ids.include?(agent_id)
+          ioi.side == 'Buy' ? buys << ioi.ranked_agent_ids : sells << ioi.ranked_agent_ids
+        end
+        !buys.empty? && !sells.empty?
+      end
     end
   end
 
@@ -114,13 +128,11 @@ class Negotiation < ApplicationRecord
   #       Canidate with the lowest vote total is removed from Canidates and makes a recursive call to
   #         #Ranked_voting with new Candidates and increments round by 1
   def self.ranked_voting(ranked_canidates, canidates, round=1)
-    filtered_canidates = ranked_canidates.map{|agents| agents & canidates}
-    votes = filtered_canidates.map{|agents| agents[0]}.compact
-    vote_freq = votes.each_with_object(Hash.new(0)){|key,hash| hash[key] += 1}
-    sorted_vote_count = vote_freq.map{|agent_id, count| count}.sort
-
-    if sorted_vote_count[-1] >= self.majority(votes.count)
-      return vote_freq.select{|agent_id, votes| votes == sorted_vote_count[-1]}.map{|agent_id, votes| agent_id}.first
+    filtered_agents = ranked_canidates.map{|agents| agents & canidates}
+    votes = filtered_agents.map{|agents| agents[0]}.compact
+    vote_count = self.votes_with_max(votes)
+    if vote_count[:max] >= self.majority(votes.count)
+      return self.get_winner(vote_count[:freq], vote_count[:max])
     else
       losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
       losers = tiebreaker(ranked_canidates, losers) if losers.count > 1
@@ -153,25 +165,55 @@ class Negotiation < ApplicationRecord
     losers.shuffle.first
   end
 
-  ##  MAJORITY
-  #   Called by #ranked_voting to determine the majority of votes
   def self.majority(count)
     count % 2 == 0 ? (count / 2) + 1 : (count /2.0).round
   end
 
-  ## ADD_PARTICIPANTS
-  #  Called by #get_negotiations and revieves all a match IOIs and the newly created Negotiation object
-  #  Iterates thru IOIs and creates a NegotiationPrincipal for all Principal that that are included in the new Negotiation.
-  def self.add_particitpants(iois, negotiation)
-    iois.each do |ioi|
-      if ioi.ranked_agent_ids.include?(negotiation.agent_id.to_s)
-        NegotiationPrincipal.create(negotiation_id: negotiation.id, principal_id: ioi.principal_id, side: ioi.side)
-      else
-        next
-      end
-    end
-
+  def self.votes(votes)
+  freq = {}, i = 0
+  while i < votes.length do
+    !freq[votes[i]] ? freq[votes[i]] = 1 : freq[votes[i]] += 1
+    i += 1
   end
+  return freq
+end
+
+def self.votes_with_max(votes)
+  freq = {}
+  max = 0
+  i = 0
+  while i < votes.length do
+    !freq[votes[i]] ? freq[votes[i]] = 1 : freq[votes[i]] += 1
+    max = freq[votes[i]] if freq[votes[i]] > max
+    i += 1
+  end
+  return {freq: freq, max: max}
+end
+
+def self.max_votes(freq)
+  max = 0
+  freq.each{|candiate, votes| max = votes if votes > max }
+  return max
+end
+
+def self.min_votes(freq)
+  min = 1000000
+  freq.each{|candiate, votes| min = votes if votes < min }
+  return min
+end
+
+def self.get_winner (freq, max)
+  winner = ''
+  freq.each {|canidate, votes| winner = canidate if votes == max}
+  return winner
+end
+
+def self.get_losers(freq, min)
+  losers = []
+  freq.each {|canidate, votes| losers.push(canidate) if votes == min}
+end
+
+
 
 
 end
