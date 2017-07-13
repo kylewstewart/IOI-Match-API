@@ -7,7 +7,6 @@ class Negotiation < ApplicationRecord
   #   Algorithm begins here
   #   Calls #get_matches which returns all Matches (IOIs from same stock that contain at least on buy and one sell). Returns false if none.
   #   Calls #get_negotiations to find and create new Negotiations from the set of Matches. Returns false if none exist.
-  #   Big O: 1
   def self.match
     matches = get_matches
     return false if !matches
@@ -19,7 +18,6 @@ class Negotiation < ApplicationRecord
   ##  GET_MATCHES
   #   Retreives all active IOIs from DB and groups by stock.
   #   Adds IOIs, grouped by stock, to Matches when there are at least one buy and one sell IOI
-  #  Big O: n2
   def self.get_matches
     iois_by_stock = Ioi.where(active: true).group_by(&:stock_id)
     matches = iois_by_stock.select do |stock_id, iois|
@@ -39,7 +37,6 @@ class Negotiation < ApplicationRecord
   #   Calls #add_particitpants to create an association between Principals and a Negotiation.
   #   Pushes the new Negotiation to the array Negotiations.
   #   Returns false if Negiations is empty
-  #
   def self.get_negotiations(matches)
     negotiations = []
     matches.each do |stock_id, iois|
@@ -139,12 +136,12 @@ class Negotiation < ApplicationRecord
   def self.ranked_voting(ranked_canidates, canidates)
     filtered_agents = ranked_canidates.map{|agents| agents & canidates}
     votes = filtered_agents.map{|agents| agents[0]}.compact
-    vote_count = self.votes_with_max(votes)
-    if vote_count[:max] >= self.majority(votes.count)
-      return self.get_winner(vote_count[:freq], vote_count[:max])
+    vote_count_with_max = self.votes_with_max(votes)
+    if vote_count_with_max[:max] >= self.majority(votes.count)
+      return self.get_winner(vote_count_with_max[:freq], vote_count_with_max[:max])
     else
-      min = self.min_votes(vote_count[:freq])
-      losers = self.get_losers(vote_count[:freq], min)
+      min = self.min_votes(vote_count_with_max[:freq])
+      losers = self.get_losers(vote_count_with_max[:freq], min)
       losers.count > 1 ? loser = tiebreaker(ranked_canidates, losers) : loser = losers.first
       remaining_canidaties = canidates.select{|agent_id| agent_id != loser}
       self.ranked_voting(ranked_canidates, remaining_canidaties)
@@ -164,10 +161,14 @@ class Negotiation < ApplicationRecord
     while index < max_index
       filtered_canidates = ranked_canidates.map{|agents| agents & losers}
       votes = filtered_canidates.map{|agents| agents[0..index]}.compact.flatten
-      vote_freq = votes.each_with_object(Hash.new(0)){|key,hash| hash[key] += 1}
-      sorted_vote_count = vote_freq.map{|agent_id, count| count}.sort
+      vote_count = self.vote(votes)
+      min_vote = self.min_votes(vote_count)
+      losers = self.get_losers(vote_count, min_votes)
 
-      losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
+      # vote_freq = votes.each_with_object(Hash.new(0)){|key,hash| hash[key] += 1}
+      # sorted_vote_count = vote_freq.map{|agent_id, count| count}.sort
+      # losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
+      
       return losers.first if losers.count == 1
       index += 1
       self.tiebreaker(ranked_canidates, losers, index)
