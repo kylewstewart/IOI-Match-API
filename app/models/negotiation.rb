@@ -5,7 +5,7 @@ class Negotiation < ApplicationRecord
 
   ##  MATCH
   #   Algorithm begins here
-  #   Calls #get_matches to find all matches from IOIs in DB. Returns false if none exsist.
+  #   Calls #get_matches which returns all Matches (IOIs from same stock that contain at least on buy and one sell). Returns false if none.
   #   Calls #get_negotiations to find and create new Negotiations from the set of Matches. Returns false if none exist.
   #   Big O: 1
   def self.match
@@ -28,7 +28,6 @@ class Negotiation < ApplicationRecord
       iois.each {|ioi| ioi.side == "Buy" ? buy = true : sell = true}
       buy && sell
     end
-    binding.pry
     matches.empty? ? false : matches
   end
 
@@ -137,17 +136,18 @@ class Negotiation < ApplicationRecord
   #       Checks for a tie if true calls #tiebreaker
   #       Canidate with the lowest vote total is removed from Canidates and makes a recursive call to
   #         #Ranked_voting with new Candidates and increments round by 1
-  def self.ranked_voting(ranked_canidates, canidates, round=1)
+  def self.ranked_voting(ranked_canidates, canidates)
     filtered_agents = ranked_canidates.map{|agents| agents & canidates}
     votes = filtered_agents.map{|agents| agents[0]}.compact
     vote_count = self.votes_with_max(votes)
     if vote_count[:max] >= self.majority(votes.count)
       return self.get_winner(vote_count[:freq], vote_count[:max])
     else
-      losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
-      losers = tiebreaker(ranked_canidates, losers) if losers.count > 1
-      remaining_canidaties = canidates.select{|agent_id| agent_id != losers.first}
-      self.ranked_voting(ranked_canidates, remaining_canidaties, round + 1)
+      min = self.min_votes(vote_count[:freq])
+      losers = self.get_losers(vote_count[:freq], min)
+      losers.count > 1 ? loser = tiebreaker(ranked_canidates, losers) : loser = losers.first
+      remaining_canidaties = canidates.select{|agent_id| agent_id != loser}
+      self.ranked_voting(ranked_canidates, remaining_canidaties)
     end
   end
 
@@ -221,6 +221,7 @@ end
 def self.get_losers(freq, min)
   losers = []
   freq.each {|canidate, votes| losers.push(canidate) if votes == min}
+  return losers
 end
 
 

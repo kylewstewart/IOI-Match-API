@@ -9,12 +9,14 @@
 
 
 
-["Citi", "GS", "JPM", "MS", "BAML", "UBS"].each{|name| Agent.create(name: name, password: "password")}
+["Citi", "GS", "JPM", "MS"].each{|name| Agent.create(name: name, password: "password")}
 
-# "BarCap",  "DB", "CS"
+# , "BAML", "UBS", "BarCap", "DB", "CS"
 
-["MMM", "AXP", "AAPL", "BA", "CAT", "CVX", "CSCO", "KO", "DD", "XOM", "GE", "GS", "HD", "IBM", "INTC", "JNJ", "JPM", "MCD",
-  "MRK", "MSFT", "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS"].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
+
+["AAPL", "CSCO", "MSFT", "IBM", "INTC" ].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
+
+# "MMM", "AXP", "BA", "CAT", "CVX",  "KO", "DD", "XOM", "GE", "GS", "HD",  , "JNJ", "JPM", "MCD", "MRK",  "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS"
 
 principals ||= Principal.all
 agents ||= Agent.all
@@ -24,13 +26,13 @@ principals.each do |principal|
   agents.shuffle[0..2].map{|agent| Sponsorship.create(principal_id: principal.id, agent_id: agent.id)}
 end
 
-# principals.each do |principal|
-#   stocks.shuffle[0..2].each do |stock|
-#     side = ["Buy", "Sell"].shuffle[0]
-#     Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
-#       ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
-#   end
-# end
+principals.each do |principal|
+  stocks.shuffle[0..4].each do |stock|
+    side = ["Buy", "Sell"].shuffle[0]
+    Ioi.create(principal_id: principal.id, stock_id: stock.id, side: side,
+      ranked_agent_ids: principal.sponsorships.map{|sp| sp.agent_id}.shuffle, side: side, active: true)
+  end
+end
 
 # principal = Principal.find(1)
 # Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',
@@ -56,4 +58,4 @@ end
 # Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Sell',
 # ranked_agent_ids: [3,2,1], active: true)
 
-# Negotiation.match
+Negotiation.match
