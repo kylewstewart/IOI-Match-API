@@ -161,14 +161,9 @@ class Negotiation < ApplicationRecord
     while index < max_index
       filtered_canidates = ranked_canidates.map{|agents| agents & losers}
       votes = filtered_canidates.map{|agents| agents[0..index]}.compact.flatten
-      vote_count = self.vote(votes)
-      min_vote = self.min_votes(vote_count)
-      losers = self.get_losers(vote_count, min_votes)
-
-      # vote_freq = votes.each_with_object(Hash.new(0)){|key,hash| hash[key] += 1}
-      # sorted_vote_count = vote_freq.map{|agent_id, count| count}.sort
-      # losers = vote_freq.select{|agent_id, votes| votes == sorted_vote_count[0]}.map{|agent_id, votes| agent_id}
-      
+      vote_count = self.votes(votes)
+      min = self.min_votes(vote_count)
+      losers = self.get_losers(vote_count, min)
       return losers.first if losers.count == 1
       index += 1
       self.tiebreaker(ranked_canidates, losers, index)
@@ -181,7 +176,8 @@ class Negotiation < ApplicationRecord
   end
 
   def self.votes(votes)
-  freq = {}, i = 0
+  freq = {}
+  i = 0
   while i < votes.length do
     !freq[votes[i]] ? freq[votes[i]] = 1 : freq[votes[i]] += 1
     i += 1
