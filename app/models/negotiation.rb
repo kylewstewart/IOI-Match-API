@@ -4,8 +4,10 @@ class Negotiation < ApplicationRecord
   has_many :principals, through: :negotiation_principals
 
   ##  MATCH
+  #   Algorithm begins here
   #   Calls #get_matches to find all matches from IOIs in DB. Returns false if none exsist.
   #   Calls #get_negotiations to find and create new Negotiations from the set of Matches. Returns false if none exist.
+  #   Big O: 1
   def self.match
     matches = get_matches
     return false if !matches
@@ -17,9 +19,16 @@ class Negotiation < ApplicationRecord
   ##  GET_MATCHES
   #   Retreives all active IOIs from DB and groups by stock.
   #   Adds IOIs, grouped by stock, to Matches when there are at least one buy and one sell IOI
+  #  Big O: n2
   def self.get_matches
-    iois_by_stk = Ioi.where(active: true).group_by(&:stock_id)
-    matches = iois_by_stk.select{|stk_id, iois|iois.select{|ioi|ioi.side=="Buy"}.count!=0 && iois.select{|ioi|ioi.side=="Sell"}.count!=0}
+    iois_by_stock = Ioi.where(active: true).group_by(&:stock_id)
+    matches = iois_by_stock.select do |stock_id, iois|
+      buy = false
+      sell = false
+      iois.each {|ioi| ioi.side == "Buy" ? buy = true : sell = true}
+      buy && sell
+    end
+    binding.pry
     matches.empty? ? false : matches
   end
 
@@ -31,6 +40,7 @@ class Negotiation < ApplicationRecord
   #   Calls #add_particitpants to create an association between Principals and a Negotiation.
   #   Pushes the new Negotiation to the array Negotiations.
   #   Returns false if Negiations is empty
+  #
   def self.get_negotiations(matches)
     negotiations = []
     matches.each do |stock_id, iois|
