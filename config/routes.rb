@@ -26,6 +26,8 @@ Rails.application.routes.draw do
       end
 
       patch '/negotiation_principals/:id' => 'negotiation_principals#update_traded'
+      get '/match_stocks' => 'algo#match_stocks'
+      get '/match/:id' => 'algo#match'
 
     end
   end

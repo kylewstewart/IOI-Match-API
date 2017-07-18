@@ -41,9 +41,10 @@ def add_negotiations
   agents.each do |agent|
     stock = stocks.shuffle.first
     neg = Negotiation.create(agent_id: agent.id, stock_id: stock.id, active: false, traded: true)
-    prins = principals.shuffle
-    buyers = prins[0..1]
-    sellers = prins[2..3]
+    prins = agent.sponsorships.shuffle
+    mid = prins.length / 2
+    buyers = prins[0..mid]
+    sellers = prins[mid..-1]
     rating = [1,2,3,4,5].shuffle.first
     traded = [true, false].shuffle.first
     buyers.each do |buyer|
@@ -74,9 +75,11 @@ end
 add_principals
 add_agents
 add_stocks
-add_negotiations
 add_sponserships(3)
-add_iois(5)
+add_negotiations
+add_negotiations
+add_negotiations
+# add_iois(5)
 
 Negotiation.match
 

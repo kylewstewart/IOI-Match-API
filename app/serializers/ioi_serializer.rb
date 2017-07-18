@@ -1,5 +1,5 @@
 class IoiSerializer < ActiveModel::Serializer
-  attributes :id, :side, :stock, :ranked_agents
+  attributes :id, :side, :stock, :ranked_agents, :principal
 
   def stock
     Stock.find(object.stock_id).exch_code
@@ -16,4 +16,10 @@ class IoiSerializer < ActiveModel::Serializer
   def active
     object.active ? "Active" : "Expired"
   end
+
+  def principal
+    binding.pry
+    Principal.find(object.principal_id)
+  end
+  
 end
