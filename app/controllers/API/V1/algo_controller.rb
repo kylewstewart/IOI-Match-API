@@ -11,9 +11,16 @@ class Api::V1::AlgoController < ApplicationController
   end
 
   def match
+    id = params['id'].to_i
     matches = Negotiation.get_matches
-    match = matches.select{|id| id == params['id'].to_i}
-    render json: match, each_serializer: IoiSerializer
+    match = matches.select{|stock_id| stock_id == id}[id]
+    render json: match, each_serializer: MatchSerializer
+  end
+
+  def common
+    binding.pry
+    iois = params['matchStocks'].map{|ioi| ioi.id}
+    common = Negotiation.get_common_broker(iois)
   end
 
 end

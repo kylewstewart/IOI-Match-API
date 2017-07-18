@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       patch '/negotiation_principals/:id' => 'negotiation_principals#update_traded'
       get '/match_stocks' => 'algo#match_stocks'
       get '/match/:id' => 'algo#match'
+      post '/common' => 'algo#common'
 
     end
   end

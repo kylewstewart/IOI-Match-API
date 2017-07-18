@@ -1,2 +1,0 @@
-class AlgoController < ApplicationController
-end
