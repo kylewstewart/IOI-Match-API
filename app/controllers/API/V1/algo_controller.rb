@@ -18,9 +18,16 @@ class Api::V1::AlgoController < ApplicationController
   end
 
   def common
-    binding.pry
-    iois = params['matchStocks'].map{|ioi| ioi.id}
-    common = Negotiation.get_common_broker(iois)
+    iois = params['match'].map{|ioi| Ioi.find(ioi['id'])}
+    common = Negotiation.get_common_broker(iois).map{|id| Agent.find(id)}
+    render json: common
+  end
+
+  private
+
+  def match_params
+    params.require(:match).permit(:id)
+
   end
 
 end
