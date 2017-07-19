@@ -90,12 +90,16 @@ class Negotiation < ApplicationRecord
     freq = all_brokers.inject(Hash.new(0)){|h,v|h[v] += 1;h}
     count = iois.count
     while count > 1 do
-      common = freq.select{|k,v| v == count}
-      common = remove_no_buyer_or_no_seller(common, iois)
+      common = []
+      freq.each do |agent_id, agent_count|
+        if agent_count == count
+            common << agent_id if self.buyer_and_seller?(agent_id, iois)
+        end
+      end
       break if !common.empty?
       count -= 1
     end
-    common.empty? ? false : common.map{|k,v| k}
+    common.empty? ? false : common
   end
 
   ##  REMOVE_NO_BUYER_OR_NO_SELLER
@@ -106,18 +110,15 @@ class Negotiation < ApplicationRecord
   #     Interates over array of buy ranked borker list and selects those that include common broker
   #     Interates over array of sell ranked borker list and selects those that include common broker
   #     return true and the common broker if neither buy or sell lists are empty
-  def self.remove_no_buyer_or_no_seller(common, iois)
-    return common if common.empty?
-    common.select do |agent_id, freq|
-      buys = []
-      sells = []
-      iois.each do |ioi|
-        if ioi.ranked_agent_ids.include?(agent_id)
-          ioi.side == 'Buy' ? buys << ioi.ranked_agent_ids : sells << ioi.ranked_agent_ids
-        end
-        !buys.empty? && !sells.empty?
+  def self.buyer_and_seller?(agent_id, iois)
+    buys = []
+    sells = []
+    iois.each do |ioi|
+      if ioi.ranked_agent_ids.include?(agent_id)
+        ioi.side == 'Buy' ? buys << agent_id : sells << agent_id
       end
     end
+    !buys.empty? && !sells.empty?
   end
 
   ##  RANKED_VOTING

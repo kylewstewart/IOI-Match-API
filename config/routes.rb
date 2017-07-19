@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       get '/match_stocks' => 'algo#match_stocks'
       get '/match/:id' => 'algo#match'
       post '/common' => 'algo#common'
+      post '/ranked_voting' => 'algo#ranked_voting'
 
     end
   end
