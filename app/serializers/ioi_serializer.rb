@@ -1,5 +1,5 @@
 class IoiSerializer < ActiveModel::Serializer
-  attributes :id, :side, :stock, :ranked_agents
+  attributes :id, :side, :stock, :ranked_agents, :time
 
   def stock
     Stock.find(object.stock_id).exch_code
