@@ -10,10 +10,10 @@ end
 # "Thornburg Management", "Artisan Partners", "BNP Paribas Asset Management", "Wells Capital Management", "Driehaus Capital Management", "AllianceBernstein"
 
 def add_agents
-  ["Citi", "GS", "JPM", "MS"].each{|name| Agent.create(name: name, password: "password")}
+  ["Citi", "GS", "JPM", "MS", "UBS", "BAML"].each{|name| Agent.create(name: name, password: "password")}
 end
 
-# , "BAML", "UBS", "BarCap", "DB", "CS"
+# "BarCap", "DB", "CS"
 
 def add_stocks
   ["AAPL", "CSCO", "MSFT", "IBM", "INTC", "MMM", "AXP", "BA", "CAT", "CVX"].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
@@ -23,7 +23,7 @@ end
 
 def add_sponserships(num_per_principal)
   principals.each do |principal|
-    agents.shuffle[0..num_per_principal - 1].map{|agent| Sponsorship.create(principal_id: principal.id, agent_id: agent.id)}
+    agents.shuffle[0..num_per_principal - 2].map{|agent| Sponsorship.create(principal_id: principal.id, agent_id: agent.id)}
   end
 end
 
@@ -50,10 +50,12 @@ def add_negotiations
     buyers.each do |buyer|
       NegotiationPrincipal.create(negotiation_id: neg.id, principal_id: buyer.id,
       side: "Buy", rating: rating, traded: traded)
+      sleep(1)
     end
     sellers.each do |buyer|
       NegotiationPrincipal.create(negotiation_id: neg.id, principal_id: buyer.id,
       side: "Sell", rating: rating, traded: traded)
+      sleep(1)
     end
   end
 end
@@ -76,8 +78,6 @@ add_principals
 add_agents
 add_stocks
 add_sponserships(3)
-add_negotiations
-add_negotiations
 add_negotiations
 # add_iois(5)
 
