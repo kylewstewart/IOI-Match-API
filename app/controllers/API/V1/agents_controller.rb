@@ -4,5 +4,5 @@ class Api::V1::AgentsController < ApplicationController
     agents = Agent.all
     render json: agents
   end
-  
+
 end
