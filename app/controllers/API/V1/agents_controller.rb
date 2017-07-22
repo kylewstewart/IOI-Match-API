@@ -5,4 +5,7 @@ class Api::V1::AgentsController < ApplicationController
     render json: agents
   end
 
+  def Create
+  end
+
 end
