@@ -11,7 +11,8 @@ class Api::V1::NegotiationPrincipalsController < ApplicationController
       principal_id: params['principal_id']).first
     render json: {
       neg_id: negotiation_principal.negotiation_id,
-      rating: negotiation_principal.rating
+      rating: negotiation_principal.rating,
+      traded: negotiation_principal.traded
     }
   end
 
