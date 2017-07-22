@@ -23,7 +23,7 @@ end
 
 def add_sponserships(num_per_principal)
   principals.each do |principal|
-    agents.shuffle[0..num_per_principal - 2].map{|agent| Sponsorship.create(principal_id: principal.id, agent_id: agent.id)}
+    agents.shuffle[0..num_per_principal - 1].map{|agent| Sponsorship.create(principal_id: principal.id, agent_id: agent.id)}
   end
 end
 
@@ -77,7 +77,7 @@ end
 add_principals
 add_agents
 add_stocks
-add_sponserships(3)
+add_sponserships(4)
 add_negotiations
 # add_iois(5)
 
