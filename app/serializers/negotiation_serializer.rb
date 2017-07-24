@@ -6,10 +6,6 @@ class NegotiationSerializer < ActiveModel::Serializer
     agent.name
   end
 
-  def active
-    !object.active ? "Completed" : "Active"
-  end
-
   def exch_code
     stock = Stock.find(object.stock_id)
     stock.exch_code

@@ -14,18 +14,16 @@ Rails.application.routes.draw do
         get '/negotiations' => 'negotiations#agents_index'
       end
 
-      resources :stocks, only: [:index]
-      resources :iois, only: [:destroy, :update]
-
       resources :negotiations, only: [:update] do
         resources :negotiation_principals, only: [:index]
         resources :principals, only: [] do
-          get 'negotiation_principals' => 'negotiation_principals#show'
-          patch 'negotiation_principals' => 'negotiation_principals#update_rating'
         end
       end
 
-      patch '/negotiation_principals/:id' => 'negotiation_principals#update_traded'
+      resources :stocks, only: [:index]
+      resources :iois, only: [:destroy, :update]
+      resources :negotiation_principals, only: [:update]
+
       get '/match_stocks' => 'algo#match_stocks'
       get '/match/:id' => 'algo#match'
       post '/common' => 'algo#common'
