@@ -1,25 +1,25 @@
 
 def add_principals
-  ["Vangaurd", "Templeton", "Capital", "BlackRock", "T. Rowe Price", "Fidelity"].each{|name| Principal.create(name: name, password: "password")}
+  ["Vangaurd", "Capital", "BlackRock", "Fidelity"].each{|name| Principal.create(name: name, password: "password")}
 end
 
- # "Aberdeen Asset Management",  "JP Morgan Asset Management", "Fidelity International",  "Matthews International Capital Management", "Oppenheimer Funds",
+ # "T. Rowe Price", "Templeton", "Aberdeen Asset Management",  "JP Morgan Asset Management", "Fidelity International",  "Matthews International Capital Management", "Oppenheimer Funds",
 # "Schroders Investment Management", "Lazard Asset Management",   "First State Investments", "Grantham, Mayo, Van Otterloo & Co.", "TIAA-CREF Investment Management", "Pictet Asset Management",
 # "UBS Global Asset Management", "Nomura Asset Management", "Goldman Sachs Asset Management", "Baring Asset Management",  "Allianz Global Investors", "Principal Global Investors", "MFS Investment Management", "Morgan Stanley Investment Management",
 # "Wasatch Advisors", "William Blair & Company", "Nordea Investment Management", "First Eagle Investment Management", "Deutsche Asset Management",
 # "Thornburg Management", "Artisan Partners", "BNP Paribas Asset Management", "Wells Capital Management", "Driehaus Capital Management", "AllianceBernstein"
 
 def add_agents
-  ["Citi", "GS", "JPM", "MS", "UBS", "BAML"].each{|name| Agent.create(name: name, password: "password")}
+  ["Citi", "GS", "JPM", "MS"].each{|name| Agent.create(name: name, password: "password")}
 end
 
-# "BarCap", "DB", "CS"
+# "BarCap", "DB", "CS", "UBS", "BAML"
 
 def add_stocks
-  ["AAPL", "CSCO", "MSFT", "IBM", "INTC", "MMM", "AXP", "BA", "CAT", "CVX"].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
+  ["AAPL", "CSCO", "MSFT", "IBM", "INTC"].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
 end
 
-#  "KO", "DD", "XOM", "GE", "GS", "HD",  , "JNJ", "JPM", "MCD", "MRK",  "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS"
+#  "KO", "DD", "XOM", "GE", "GS", "HD",  , "JNJ", "JPM", "MCD", "MRK",  "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS", "MMM", "AXP", "BA", "CAT", "CVX"
 
 def add_sponserships(num_per_principal)
   principals.each do |principal|
@@ -77,11 +77,11 @@ end
 add_principals
 add_agents
 add_stocks
-add_sponserships(4)
-add_negotiations
+add_sponserships(3)
+# add_negotiations
 # add_iois(5)
 
-Negotiation.match
+# Negotiation.match
 
 # principal = Principal.find(1)
 # Ioi.create(principal_id: principal.id, stock_id: 1, side: 'Buy',
