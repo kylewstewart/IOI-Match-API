@@ -30,8 +30,15 @@ class Api::V1::NegotiationsController < ApplicationController
 
   def update
     negotiation = Negotiation.find(params['id'])
-    negotiation.update(active: params['active'], traded: params['traded'])
+    negotiation.update(update_params)
     render json: negotiation
+  end
+
+  private
+
+  def update_params
+    params.require(:update).permit(:active)
+
   end
 
 end
