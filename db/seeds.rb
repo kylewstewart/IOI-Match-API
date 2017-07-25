@@ -1,19 +1,17 @@
 
 def add_principals
-  ["Vangaurd", "Capital", "BlackRock", "Fidelity"].each{|name| Principal.create(name: name, password: "password")}
+  ["Vangaurd", "Capital", "BlackRock", "Fidelity", "T. Rowe Price", "Templeton"].each{|name| Principal.create(name: name, password: "password")}
 end
 
- # "T. Rowe Price", "Templeton", "Aberdeen Asset Management",  "JP Morgan Asset Management", "Fidelity International",  "Matthews International Capital Management", "Oppenheimer Funds",
+ #  "Aberdeen Asset Management",  "JP Morgan Asset Management", "Fidelity International",  "Matthews International Capital Management", "Oppenheimer Funds",
 # "Schroders Investment Management", "Lazard Asset Management",   "First State Investments", "Grantham, Mayo, Van Otterloo & Co.", "TIAA-CREF Investment Management", "Pictet Asset Management",
 # "UBS Global Asset Management", "Nomura Asset Management", "Goldman Sachs Asset Management", "Baring Asset Management",  "Allianz Global Investors", "Principal Global Investors", "MFS Investment Management", "Morgan Stanley Investment Management",
 # "Wasatch Advisors", "William Blair & Company", "Nordea Investment Management", "First Eagle Investment Management", "Deutsche Asset Management",
 # "Thornburg Management", "Artisan Partners", "BNP Paribas Asset Management", "Wells Capital Management", "Driehaus Capital Management", "AllianceBernstein"
 
 def add_agents
-  ["Citi", "GS", "JPM", "MS"].each{|name| Agent.create(name: name, password: "password")}
+  ["Citi", "GS", "JPM", "MS", "BAML", "BarCap", "DB", "CS", "UBS"].each{|name| Agent.create(name: name, password: "password")}
 end
-
-# "BarCap", "DB", "CS", "UBS", "BAML"
 
 def add_stocks
   ["AAPL", "CSCO", "MSFT", "IBM", "INTC"].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
@@ -77,7 +75,7 @@ end
 add_principals
 add_agents
 add_stocks
-add_sponserships(3)
+add_sponserships(4)
 # add_negotiations
 # add_iois(5)
 

@@ -21,7 +21,12 @@ class Api::V1::AlgoController < ApplicationController
     iois = params['match'].map{|ioi| Ioi.find(ioi['id'])}
     Negotiation.get_common_broker(iois)
     common = Negotiation.get_common_broker(iois)
-    render json: !!common ? common.map{|id| Agent.find(id)} : []
+    if !!common
+      agents = common.map{|id| Agent.find(id)}
+    else
+      agents = []
+    end
+    render json: agents
   end
 
   def ranked_voting
