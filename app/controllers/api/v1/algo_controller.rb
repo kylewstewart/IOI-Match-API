@@ -12,7 +12,7 @@ class Api::V1::AlgoController < ApplicationController
 
   def match
     id = params['id'].to_i
-    matches = Negotiation.get_matches
+    matches = get_matches
     match = matches.select{|stock_id| stock_id == id}[id]
     render json: match, each_serializer: MatchSerializer
   end
