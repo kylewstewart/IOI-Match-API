@@ -1,7 +1,7 @@
 class Api::V1::AlgoController < ApplicationController
 
   def match_stocks
-    matches = Negotiation.get_matches
+    matches = get_matches
     if !matches
       stocks = nil
     else
@@ -39,6 +39,17 @@ class Api::V1::AlgoController < ApplicationController
     render json: results
   end
 
+  def get_matches
+    iois_by_stock = Ioi.all.group_by(&:stock_id)
+    matches = iois_by_stock.select do |stock_id, iois|
+      buy = false
+      sell = false
+      iois.each {|ioi| ioi.side == "Buy" ? buy = true : sell = true}
+      buy && sell
+    end
+    matches.empty? ? false : matches
+  end
+
   def ranked_voting_data(canidates, ranked_canidates)
     filtered_ranked_canidates = ranked_canidates.map{|agents| agents & canidates}
     votes = filtered_ranked_canidates.map{|canidates| canidates[0]}.compact
@@ -54,5 +65,7 @@ class Api::V1::AlgoController < ApplicationController
     end
     data = {canidates: canidates, winner: winner, loser: loser, votes: vote_count_with_max[:freq]}
   end
+
+
 
 end

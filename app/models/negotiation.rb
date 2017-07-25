@@ -56,6 +56,7 @@ class Negotiation < ApplicationRecord
     iois.each do |ioi|
       if ioi.ranked_agent_ids.include?(negotiation.agent_id.to_s)
         NegotiationPrincipal.create(negotiation_id: negotiation.id, principal_id: ioi.principal_id, side: ioi.side)
+        ioi.update(active: false)
       else
         next
       end

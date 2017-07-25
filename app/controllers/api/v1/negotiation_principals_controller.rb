@@ -19,6 +19,10 @@ class Api::V1::NegotiationPrincipalsController < ApplicationController
   def update
     neg_prin = NegotiationPrincipal.find(params['id'])
     neg_prin.update(update_params)
+    ioi = Ioi.where(principal_id: neg_prin.principal_id, side: neg_prin.side, active: false)
+    ioi.destroy
+    # Deletes IOI so, algo controller can search active and non-active IOIs for matches.
+    binding.pry
     render json: neg_prin
   end
 
