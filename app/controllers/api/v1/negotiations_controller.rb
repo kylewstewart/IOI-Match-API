@@ -15,7 +15,8 @@ class Api::V1::NegotiationsController < ApplicationController
         time: time,
         rating: negotiation_principal.rating,
         traded: !negotiation_principal.traded ? 'No Trade' : 'Traded',
-        neg_prin_id: negotiation_principal.id
+        neg_prin_id: negotiation_principal.id,
+        principal_id: principal.id
       }
       principal_negotiations << principal_negotiation
     end
