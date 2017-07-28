@@ -1,6 +1,6 @@
 
 def add_principals
-  ["Vangaurd", "Capital", "BlackRock", "Fidelity", "T. Rowe Price", "Templeton"].each{|name| Principal.create(name: name, password: "password")}
+  ["Vangaurd", "Capital", "BlackRock"].each{|name| Principal.create(name: name, password: "password")}
 end
 
  #  "Aberdeen Asset Management",  "JP Morgan Asset Management", "Fidelity International",  "Matthews International Capital Management", "Oppenheimer Funds",
@@ -8,13 +8,16 @@ end
 # "UBS Global Asset Management", "Nomura Asset Management", "Goldman Sachs Asset Management", "Baring Asset Management",  "Allianz Global Investors", "Principal Global Investors", "MFS Investment Management", "Morgan Stanley Investment Management",
 # "Wasatch Advisors", "William Blair & Company", "Nordea Investment Management", "First Eagle Investment Management", "Deutsche Asset Management",
 # "Thornburg Management", "Artisan Partners", "BNP Paribas Asset Management", "Wells Capital Management", "Driehaus Capital Management", "AllianceBernstein"
+ # "Fidelity", "T. Rowe Price", "Templeton"
 
 def add_agents
-  ["Citi", "GS", "JPM", "MS", "BAML", "BarCap", "DB", "CS", "UBS"].each{|name| Agent.create(name: name, password: "password")}
+  ["Citi", "GS", "JPM", "MS"].each{|name| Agent.create(name: name, password: "password")}
 end
 
+ # "DB", "CS", "UBS", "BAML", "BarCap"
+
 def add_stocks
-  ["AAPL", "CSCO", "MSFT", "IBM", "INTC"].each{|exch_code| Stock.create(exch_code: exch_code, country: 'us')}
+  ["AAPL", "CSCO", "MSFT", "IBM", "INTC"].each{|exch_code| Stock.create(exch_code: exch_code)}
 end
 
 #  "KO", "DD", "XOM", "GE", "GS", "HD",  , "JNJ", "JPM", "MCD", "MRK",  "NKE", "PFE", "PG", "TRV", "UNH", "UTX", "VZ", "V", "WMT", "DIS", "MMM", "AXP", "BA", "CAT", "CVX"
@@ -26,6 +29,7 @@ def add_sponserships(num_per_principal)
 end
 
 def add_iois(num_per_principal)
+
   principals.each do |principal|
     stocks.shuffle[0..(num_per_principal - 1)].each do |stock|
       side = ["Buy", "Sell"].shuffle[0]

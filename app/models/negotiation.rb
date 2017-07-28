@@ -170,7 +170,7 @@ class Negotiation < ApplicationRecord
       index += 1
       self.tiebreaker(ranked_canidates, losers, index)
     end
-    losers.shuffle.first
+    losers.last
   end
 
   def self.majority(count)
